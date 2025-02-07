@@ -7,6 +7,12 @@ const eventRoutes = require('./routes/eventRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const { initSocket, getIO } = require('./utils/socket');
+const cors = require('cors');
+
+app.use(cors({
+    origin: "http://localhost:5173", // Your frontend URL
+    credentials: true
+}));
 
 const app = express();
 const server = http.createServer(app);
