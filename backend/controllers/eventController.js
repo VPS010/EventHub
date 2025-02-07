@@ -43,6 +43,27 @@ const getEvents = async (req, res) => {
     }
 };
 
+const getEventsByid = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const event = await Event.findById(id)
+            .populate('organizer', ['name'])
+            .populate('attendees', ['name']);
+
+        if (!event) {
+            return res.status(404).json({ msg: 'Event not found' });
+        }
+        console.log(event);
+        res.json(event);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Event not found' });
+        }
+        res.status(500).send('Server error');
+    }
+};
+
 const updateEvent = async (req, res) => {
     const { title, description, date, location, category, image } = req.body;
 
@@ -121,4 +142,4 @@ const joinEvent = async (req, res) => {
     }
 };
 
-module.exports = { createEvent, getEvents, updateEvent, deleteEvent, joinEvent };
+module.exports = { createEvent, getEvents, getEventsByid, updateEvent, deleteEvent, joinEvent };

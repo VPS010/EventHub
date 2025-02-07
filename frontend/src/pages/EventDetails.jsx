@@ -15,11 +15,26 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(true);
   const [isAttending, setIsAttending] = useState(false);
 
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
+  });
+
+  api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
   useEffect(() => {
+    console.log("Here Here")
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
+        const res = await api.get(`/events/${eventId}`);
         setEvent(res.data);
+        console.log("event", res);
         setIsAttending(res.data.attendees.includes(user?.id));
       } catch (error) {
         toast.error("Failed to load event details");
@@ -54,7 +69,7 @@ const EventDetails = () => {
 
   const handleJoinEvent = async () => {
     try {
-      await axios.post(`/api/events/${eventId}/join`);
+      await api.post(`/events/join/${eventId}`);
       setIsAttending(true);
       toast.success("Successfully joined the event!");
     } catch (error) {
@@ -62,14 +77,20 @@ const EventDetails = () => {
     }
   };
 
-  if (loading)
+  if (loading) {
     return <div className="text-center py-8">Loading event details...</div>;
+  }
+
+  if (!event) {
+    console.log("Event: ",event)
+    return <div className="text-center py-8">Event not found</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {event.image && (
+          {event.image && event.image !== "" && (
             <img
               src={event.image}
               alt={event.title}
@@ -82,7 +103,7 @@ const EventDetails = () => {
               {event.title}
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-start">
                 <Calendar className="h-6 w-6 text-indigo-600 mr-3 flex-shrink-0" />
                 <div>
@@ -108,50 +129,50 @@ const EventDetails = () => {
                   <p className="font-medium">{event.attendees.length}</p>
                 </div>
               </div>
+            </div>
 
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">Description</h2>
-                <p className="text-gray-600 whitespace-pre-wrap">
-                  {event.description}
-                </p>
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">Description</h2>
+              <p className="text-gray-600 whitespace-pre-wrap">
+                {event.description}
+              </p>
+            </div>
+
+            <div className="border-t mt-8 pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">
+                  Attendees ({event.attendees.length})
+                </h2>
+                {!isAttending && new Date(event.date) > new Date() && (
+                  <button
+                    onClick={handleJoinEvent}
+                    className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200"
+                  >
+                    <Clock className="h-5 w-5 mr-2" />
+                    Join Event
+                  </button>
+                )}
+                {isAttending && (
+                  <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">
+                    You're attending
+                  </span>
+                )}
               </div>
-
-              <div className="border-t pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold">
-                    Attendees ({event.attendees.length})
-                  </h2>
-                  {!isAttending && new Date(event.date) > new Date() && (
-                    <button
-                      onClick={handleJoinEvent}
-                      className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200"
-                    >
-                      <Clock className="h-5 w-5 mr-2" />
-                      Join Event
-                    </button>
-                  )}
-                  {isAttending && (
-                    <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">
-                      You're attending
-                    </span>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {event.attendees.map((attendee) => (
-                    <div
-                      key={attendee._id}
-                      className="flex items-center p-3 bg-gray-50 rounded-lg"
-                    >
-                      <User className="h-6 w-6 text-gray-600 mr-3" />
-                      <span className="font-medium">{attendee.name}</span>
-                    </div>
-                  ))}
-                  {event.attendees.length === 0 && (
-                    <div className="col-span-full text-center py-4 text-gray-500">
-                      No attendees yet
-                    </div>
-                  )}
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {event.attendees.map((attendee) => (
+                  <div
+                    key={attendee._id}
+                    className="flex items-center p-3 bg-gray-50 rounded-lg"
+                  >
+                    <User className="h-6 w-6 text-gray-600 mr-3" />
+                    <span className="font-medium">{attendee.name}</span>
+                  </div>
+                ))}
+                {event.attendees.length === 0 && (
+                  <div className="col-span-full text-center py-4 text-gray-500">
+                    No attendees yet
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -160,4 +181,5 @@ const EventDetails = () => {
     </div>
   );
 };
+
 export default EventDetails;

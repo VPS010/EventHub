@@ -13,23 +13,24 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const register = async (data) => {
-    const res = await axios.post("/api/auth/register", data);
+    const res = await api.post("/auth/register", data);
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
     toast.success("Registration successful!");
   };
 
   const login = async (data) => {
-    const res = await axios.post("/api/auth/login", data);
+    const res = await api.post("/auth/login", data);
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
     toast.success("Login successful!");
   };
 
   const guestLogin = async () => {
-    const res = await axios.post("/api/auth/guest-login");
+    const res = await api.post("/auth/guest-login");
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
+    console.log(user);
     toast.success("Guest login successful!");
   };
 
@@ -40,8 +41,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Add to axios instance creation in AuthContext.jsx
+  // In AuthContext.jsx, ensure proper axios instance creation
   const api = axios.create({
-    baseURL: import.meta.env.REACT_APP_API_URL,
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
   });
 
   // Add this interceptor
@@ -56,10 +59,18 @@ export const AuthProvider = ({ children }) => {
   // Update the checkAuthStatus method:
   const checkAuthStatus = async () => {
     try {
-      const res = await api.get("/auth/me");
-      setUser(res.data);
+      const res = await api.get("/auth/check");
+      setUser({
+        id: res.data.id,
+        name: res.data.name,
+        email: res.data.email,
+        isGuest: res.data.isGuest,
+      });
     } catch (error) {
-      logout();
+      // Only logout on 401 unauthorized errors
+      if (error.response?.status === 401) {
+        logout();
+      }
     } finally {
       setLoading(false);
     }

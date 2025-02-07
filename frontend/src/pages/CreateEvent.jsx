@@ -15,9 +15,23 @@ const CreateEvent = () => {
     }
   }, [user, navigate]);
 
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
+  });
+
+  // Add this interceptor
+  api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
   const handleSubmit = async (eventData) => {
     try {
-      await axios.post("/api/events", eventData);
+      await api.post("/events", eventData);
       toast.success("Event created successfully!");
       navigate("/");
     } catch (error) {

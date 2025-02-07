@@ -7,10 +7,24 @@ const useEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
+  });
+
+  // Add this interceptor
+  api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("/api/events");
+        const res = await api.get("/events");
         // Debug logging
         console.log("API Response:", res);
         console.log("Response data:", res.data);

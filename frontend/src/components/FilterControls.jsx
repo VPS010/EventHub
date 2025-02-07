@@ -23,7 +23,16 @@ const FilterControls = ({
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="all">All Categories</option>
+            <option value="All">All Categories</option>
+            <option value="Conference">Conference</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Networking">Networking</option>
+            <option value="Festival">Festival</option>
+            <option value="Music">Music</option>
+            <option value="Sports">Sports</option>
+            <option value="Meetup">Meetup</option>
+            <option value="Social">Social</option>
+            <option value="Others">Others</option>
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}

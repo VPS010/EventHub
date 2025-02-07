@@ -154,8 +154,13 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
               <option value="">Select a category</option>
               <option value="Conference">Conference</option>
               <option value="Workshop">Workshop</option>
-              <option value="Social">Social</option>
               <option value="Networking">Networking</option>
+              <option value="Festival">Festival</option>
+              <option value="Music">Music</option>
+              <option value="Sports">Sports</option>
+              <option value="Meetup">Meetup</option>
+              <option value="Social">Social</option>
+              <option value="Others">Others</option>
             </select>
             {formik.touched.category && formik.errors.category && (
               <p className="mt-1 text-sm text-red-600">

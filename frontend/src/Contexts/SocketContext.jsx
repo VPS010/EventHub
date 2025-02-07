@@ -7,7 +7,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(import.meta.env.REACT_APP_SOCKET_URL, {
+    const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       withCredentials: true,
     });
 

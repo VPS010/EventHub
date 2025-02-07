@@ -9,13 +9,20 @@ const errorHandler = require('./middleware/errorHandler');
 const { initSocket, getIO } = require('./utils/socket');
 const cors = require('cors');
 
-app.use(cors({
-    origin: "http://localhost:5173", // Your frontend URL
-    credentials: true
-}));
 
 const app = express();
 const server = http.createServer(app);
+
+
+// Add this before your routes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
+
+
 
 // Connect Database
 connectDB();
@@ -39,7 +46,7 @@ app.use('/api/upload', uploadRoutes);
 // Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () =>
     console.log(`Server started on port ${PORT}`)

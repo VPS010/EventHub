@@ -9,17 +9,21 @@ import { useAuth } from "../Contexts/AuthContext";
 const Dashboard = () => {
   const { user } = useAuth();
   const { events = [], loading, error } = useEvents(); // Provide default empty array
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedDate, setSelectedDate] = useState("");
 
   const filteredEvents =
     events?.filter((event) => {
       const matchesCategory =
-        selectedCategory === "all" || event.category === selectedCategory;
+        selectedCategory === "All" || event.category === selectedCategory;
       const matchesDate = selectedDate
         ? new Date(event.date).toDateString() ===
           new Date(selectedDate).toDateString()
         : true;
+      if (selectedCategory == "All") {
+        return matchesDate;
+      }
+
       return matchesCategory && matchesDate;
     }) || [];
 
