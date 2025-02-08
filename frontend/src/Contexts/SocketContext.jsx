@@ -9,11 +9,28 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       withCredentials: true,
+      transports: ["polling", "websocket"],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Socket connected successfully");
     });
 
     setSocket(newSocket);
 
-    return () => newSocket.close();
+    return () => {
+      if (newSocket) {
+        newSocket.close();
+      }
+    };
   }, []);
 
   return (

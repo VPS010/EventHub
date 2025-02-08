@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const User = require('../models/User')
 
 const createEvent = async (req, res) => {
     // Destructure image along with other fields from req.body.
@@ -121,19 +122,35 @@ const joinEvent = async (req, res) => {
         const event = await Event.findById(req.params.id);
         if (!event) return res.status(404).json({ msg: 'Event not found' });
 
-        if (event.attendees.includes(req.user.id)) {
-            return res.status(400).json({ msg: 'Already attending' });
-        }
+        const userId = req.user.id;
+        const attendeeIndex = event.attendees.findIndex(attendee =>
+            attendee.toString() === userId
+        );
 
-        event.attendees.push(req.user.id);
+        let action;
+        if (attendeeIndex === -1) {
+            event.attendees.push(userId);
+            action = 'joined';
+        } else {
+            event.attendees.splice(attendeeIndex, 1);
+            action = 'left';
+        }
         await event.save();
 
-        // Emit real-time update.
+        const user = await User.findById(userId).select('name email');
         const io = req.app.get('io');
-        io.to(req.params.id).emit('attendee_joined', {
-            eventId: req.params.id,
-            userId: req.user.id
-        });
+
+        if (action === 'joined') {
+            io.emit('attendee_joined', {
+                eventId: event._id,
+                user: { _id: user._id, name: user.name }
+            });
+        } else {
+            io.emit('attendee_left', {
+                eventId: event._id,
+                userId: user._id
+            });
+        }
 
         res.json(event.attendees);
     } catch (err) {

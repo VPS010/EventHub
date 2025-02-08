@@ -24,13 +24,17 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
     toast.success("Login successful!");
+    console.log(user);
   };
 
   const guestLogin = async () => {
+    console.log("Here1");
     const res = await api.post("/auth/guest-login");
+    console.log("Here2");
     localStorage.setItem("token", res.data.token);
+    console.log("Here3");
+    // Ensure isGuest is set to true for guest users
     setUser(res.data.user);
-    console.log(user);
     toast.success("Guest login successful!");
   };
 
@@ -56,20 +60,21 @@ export const AuthProvider = ({ children }) => {
     return config;
   });
 
-  // Update the checkAuthStatus method:
   const checkAuthStatus = async () => {
     try {
       const res = await api.get("/auth/check");
-      setUser({
-        id: res.data.id,
-        name: res.data.name,
-        email: res.data.email,
-        isGuest: res.data.isGuest,
-      });
+      if (res.data.user) {
+        setUser({
+          id: res.data.user.id,
+          name: res.data.user.name,
+          email: res.data.user.email,
+          isGuest: res.data.user.isGuest,
+        });
+      }
     } catch (error) {
-      // Only logout on 401 unauthorized errors
       if (error.response?.status === 401) {
-        logout();
+        localStorage.removeItem("token");
+        setUser(null);
       }
     } finally {
       setLoading(false);

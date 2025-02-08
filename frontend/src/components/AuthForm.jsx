@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, Mail, User, Lock } from "lucide-react";
 import { toast } from "react-toastify";
+import PasswordInput from "./passwordInput";
 
 const AuthForm = ({ type, onSubmit }) => {
   const [formData, setFormData] = useState({

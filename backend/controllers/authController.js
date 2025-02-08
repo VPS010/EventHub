@@ -3,31 +3,25 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 
+// controllers/authController.js
 const authCheck = async (req, res) => {
     try {
-        // Changed from findOne(req.user) to findById(req.user.id)
-        const authUser = await User.findById(req.user.id);
+        const user = await User.findOne({ _id: req.user.id }).select('-password');
+        if (!user) return res.status(404).json({ msg: 'User not found' });
 
-        if (!authUser) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Return sanitized user data (without password)
-        const userData = {
-            id: authUser._id,
-            name: authUser.name,
-            email: authUser.email,
-            isGuest: authUser.isGuest
-        };
-
-        res.status(200).json(userData);
-
-    } catch (error) {
-        console.error('Auth check error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.json({
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                isGuest: user.isGuest
+            }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
 };
-
 
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -57,7 +51,8 @@ const registerUser = async (req, res) => {
                     user: {
                         id: user.id,
                         name: user.name,
-                        email: user.email
+                        email: user.email,
+                        isGuest: user.isGuest
                     }
                 });
             }
@@ -94,7 +89,8 @@ const loginUser = async (req, res) => {
                     user: {
                         id: user.id,
                         name: user.name,
-                        email: user.email
+                        email: user.email,
+                        isGuest: user.isGuest
                     }
                 });
             }
@@ -108,6 +104,7 @@ const loginUser = async (req, res) => {
 const guestLogin = async (req, res) => {
     try {
         // Generate random number between 1000 and 9999
+        console.log("hello guest")
         const randomNum = Math.floor(Math.random() * 9000) + 1000;
 
         // Create guest user with random number in name and email
@@ -132,7 +129,8 @@ const guestLogin = async (req, res) => {
                     user: {
                         id: guestUser.id,
                         name: guestUser.name,
-                        email: guestUser.email
+                        email: guestUser.email,
+                        isGuest: guestUser.isGuest
                     }
                 });
             }

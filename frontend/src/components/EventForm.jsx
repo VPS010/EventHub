@@ -9,10 +9,20 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
   const [imageUrl, setImageUrl] = useState(initialValues?.image || "");
   const [uploading, setUploading] = useState(false);
 
+  // Get today's date at midnight for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
     description: Yup.string().required("Description is required"),
-    date: Yup.date().required("Date is required"),
+    date: Yup.date()
+      .required("Date is required")
+      .min(today, "Cannot create events in the past")
+      .test("is-future", "Event date must be in the future", function (value) {
+        if (!value) return true; // Let the required validation handle null/undefined
+        return true;
+      }),
     location: Yup.string().required("Location is required"),
     category: Yup.string().required("Category is required"),
   });
@@ -28,6 +38,13 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      // Double-check date validation before submitting
+      const eventDate = new Date(values.date);
+      const now = new Date();
+      if (eventDate < now) {
+        toast.error("Cannot create events in the past");
+        return;
+      }
       await onSubmit({ ...values, image: imageUrl });
     },
   });
@@ -53,6 +70,17 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
     } finally {
       setUploading(false);
     }
+  };
+
+  // Get the minimum allowed date-time string for the input
+  const getMinDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   return (
@@ -109,6 +137,7 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
               <input
                 type="datetime-local"
                 name="date"
+                min={getMinDateTime()}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 {...formik.getFieldProps("date")}
               />
