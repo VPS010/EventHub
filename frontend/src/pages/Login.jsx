@@ -9,13 +9,13 @@ const Login = () => {
 
   const handleLogin = async (data) => {
     await login(data);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   const handleGuestLogin = async () => {
     console.log("pressed");
     await guestLogin();
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

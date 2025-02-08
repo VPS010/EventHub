@@ -29,15 +29,11 @@ const FilterControls = ({
             <option value="Networking">Networking</option>
             <option value="Festival">Festival</option>
             <option value="Music">Music</option>
+            <option value="Dance">Dance</option>
             <option value="Sports">Sports</option>
             <option value="Meetup">Meetup</option>
             <option value="Social">Social</option>
             <option value="Others">Others</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
           </select>
         </div>
         <div>

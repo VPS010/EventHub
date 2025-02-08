@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Loader2, Calendar, MapPin, Text, AlignLeft } from "lucide-react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../hooks/api";
 
 const EventForm = ({ initialValues, onSubmit, isEditing }) => {
-  const [imageUrl, setImageUrl] = useState(initialValues?.image || "");
+  const [imageUrl, setImageUrl] = useState(
+    initialValues?.image || "https://sampleimage.png"
+  );
   const [uploading, setUploading] = useState(false);
 
   // Get today's date at midnight for comparison
@@ -23,6 +25,7 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
         if (!value) return true; // Let the required validation handle null/undefined
         return true;
       }),
+    image: Yup.string().url("Invalid image URL"),
     location: Yup.string().required("Location is required"),
     category: Yup.string().required("Category is required"),
   });
@@ -34,7 +37,7 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
       date: "",
       location: "",
       category: "",
-      image: "",
+      image: "https://sampleimage.png",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -58,15 +61,13 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
     formData.append("image", file);
 
     try {
-      const res = await axios.post("/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await api.post("/upload", formData);
       setImageUrl(res.data.url);
       toast.success("Image uploaded successfully");
     } catch (error) {
+      console.error("Upload error:", error);
       toast.error("Image upload failed");
+      e.target.value = ""; // Reset file input
     } finally {
       setUploading(false);
     }
@@ -186,6 +187,7 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
               <option value="Networking">Networking</option>
               <option value="Festival">Festival</option>
               <option value="Music">Music</option>
+              <option value="Dance">Dance</option>
               <option value="Sports">Sports</option>
               <option value="Meetup">Meetup</option>
               <option value="Social">Social</option>
@@ -212,12 +214,19 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
               />
               <label
                 htmlFor="imageUpload"
-                className="w-full p-2 border rounded-lg cursor-pointer flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                className="w-full p-2 border rounded-lg cursor-pointer flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
               >
                 {uploading ? (
                   <Loader2 className="h-5 w-5 animate-spin text-indigo-600" />
                 ) : imageUrl ? (
-                  "Image Uploaded ✓"
+                  <>
+                    <img
+                      src={imageUrl}
+                      alt="Preview"
+                      className="h-20 w-20 object-cover mb-2 rounded-md"
+                    />
+                    <span className="text-sm">Change Image</span>
+                  </>
                 ) : (
                   "Upload Image"
                 )}
@@ -228,7 +237,7 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
 
         <button
           type="submit"
-          disabled={formik.isSubmitting}
+          disabled={formik.isSubmitting || uploading}
           className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 disabled:opacity-50"
         >
           {formik.isSubmitting ? (

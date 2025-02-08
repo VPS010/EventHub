@@ -8,7 +8,7 @@ const Register = () => {
 
   const handleRegister = async (data) => {
     await register(data);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

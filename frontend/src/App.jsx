@@ -7,7 +7,8 @@ import Register from "./pages/Register";
 import CreateEvent from "./pages/CreateEvent";
 import EventDetails from "./pages/EventDetails";
 import Navbar from "./components/Navbar";
-import Dashboard from "./pages/Dashboard"
+import Dashboard from "./pages/Dashboard";
+import LandingPage from "./pages/LandingPage";
 import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
@@ -17,9 +18,10 @@ const App = () => {
         <SocketProvider>
           <div className="min-h-screen bg-gray-50">
             <Navbar />
-            <main className="pt-20">
+            <main className="pt-16">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/create-event" element={<CreateEvent />} />
