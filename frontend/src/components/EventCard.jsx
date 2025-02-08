@@ -129,7 +129,7 @@ const EventCard = ({ event: initialEvent }) => {
             )}
 
             {isOrganizer && (
-              <span className="px-3 py-1 bg-green-100 justify-center items-center flex my-2 text-green-600 rounded-full text-md">
+              <span className="px-3 py-1 bg-yellow-100 justify-center items-center flex my-2 text-yellow-600 rounded-full text-md">
                 Your Event
               </span>
             )}

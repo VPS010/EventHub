@@ -4,6 +4,7 @@ import { useAuth } from "../Contexts/AuthContext";
 import EventForm from "../components/EventForm";
 import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../hooks/api";
 
 const CreateEvent = () => {
   const { user } = useAuth();
@@ -11,23 +12,9 @@ const CreateEvent = () => {
 
   useEffect(() => {
     if (user?.isGuest) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [user, navigate]);
-
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true,
-  });
-
-  // Add this interceptor
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
 
   const handleSubmit = async (eventData) => {
     try {

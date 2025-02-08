@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../hooks/api";
+
 
 const AuthContext = createContext();
 
@@ -24,15 +25,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
     toast.success("Login successful!");
-    console.log(user);
   };
 
   const guestLogin = async () => {
-    console.log("Here1");
     const res = await api.post("/auth/guest-login");
-    console.log("Here2");
     localStorage.setItem("token", res.data.token);
-    console.log("Here3");
     // Ensure isGuest is set to true for guest users
     setUser(res.data.user);
     toast.success("Guest login successful!");
@@ -44,21 +41,6 @@ export const AuthProvider = ({ children }) => {
     toast.success("Logged out successfully!");
   };
 
-  // Add to axios instance creation in AuthContext.jsx
-  // In AuthContext.jsx, ensure proper axios instance creation
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true,
-  });
-
-  // Add this interceptor
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
 
   const checkAuthStatus = async () => {
     try {

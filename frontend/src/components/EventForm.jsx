@@ -6,9 +6,7 @@ import { toast } from "react-toastify";
 import api from "../hooks/api";
 
 const EventForm = ({ initialValues, onSubmit, isEditing }) => {
-  const [imageUrl, setImageUrl] = useState(
-    initialValues?.image || "https://sampleimage.png"
-  );
+  const [imageUrl, setImageUrl] = useState(initialValues?.image || "");
   const [uploading, setUploading] = useState(false);
 
   // Get today's date at midnight for comparison

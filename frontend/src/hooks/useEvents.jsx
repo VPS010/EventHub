@@ -27,9 +27,6 @@ const useEvents = () => {
     const fetchEvents = async () => {
       try {
         const res = await api.get("/events");
-        // Debug logging
-        console.log("API Response:", res);
-        console.log("Response data:", res.data);
 
         // Ensure we're setting an array
         const eventsData = Array.isArray(res.data)

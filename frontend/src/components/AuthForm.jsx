@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, Mail, User, Lock } from "lucide-react";
+import { Loader2, Mail, User, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import PasswordInput from "./passwordInput";
 
@@ -11,6 +11,7 @@ const AuthForm = ({ type, onSubmit }) => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,9 +19,13 @@ const AuthForm = ({ type, onSubmit }) => {
     try {
       await onSubmit(formData);
     } catch (error) {
-      toast.error(error.message || "An error occurred");
+      toast.error("Incorrect email or password");
     }
     setLoading(false);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -74,15 +79,26 @@ const AuthForm = ({ type, onSubmit }) => {
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
               minLength="6"
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
         <button
@@ -106,6 +122,17 @@ const AuthForm = ({ type, onSubmit }) => {
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
               Register here
+            </Link>
+          </div>
+        )}
+        {type === "register" && (
+          <div className="text-center text-sm">
+            <span className="text-gray-600">Already have an account? </span>
+            <Link
+              to="/login"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Login here
             </Link>
           </div>
         )}

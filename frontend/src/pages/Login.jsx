@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 import AuthForm from "../components/AuthForm";
-import { ConciergeBell } from "lucide-react";
 
 const Login = () => {
   const { login, guestLogin } = useAuth();
@@ -13,7 +12,6 @@ const Login = () => {
   };
 
   const handleGuestLogin = async () => {
-    console.log("pressed");
     await guestLogin();
     navigate("/dashboard");
   };
