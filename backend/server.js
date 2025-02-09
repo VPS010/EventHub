@@ -6,7 +6,7 @@ const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const errorHandler = require('./middleware/errorHandler');
-const { initSocket, getIO } = require('./utils/socket');
+const { initSocket} = require('./utils/socket');
 const cors = require('cors');
 
 
@@ -18,7 +18,7 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }));
 

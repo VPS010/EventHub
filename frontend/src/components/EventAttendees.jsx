@@ -43,6 +43,7 @@ const EventAttendees = ({
         </h2>
         <div className="flex items-center gap-4">
           {renderAttendanceStatus()}
+          {renderAttendanceButton()}
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
