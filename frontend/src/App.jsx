@@ -1,7 +1,6 @@
-import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { AuthProvider, SocketProvider } from "./contexts";
+import { AuthProvider, SocketProvider } from "./Contexts/index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreateEvent from "./pages/CreateEvent";
