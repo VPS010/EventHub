@@ -35,7 +35,7 @@ app.set('io', io);
 app.use(express.json({ extended: false }));
 
 app.get("/", (req, res) => {
-    res.send("hello world");
+    res.send("ya server is UP");
 })
 
 // Routes
