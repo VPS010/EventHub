@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 import EventForm from "../components/EventForm";
-import axios from "axios";
 import { toast } from "react-toastify";
 import api from "../hooks/api";
 
@@ -20,7 +19,7 @@ const CreateEvent = () => {
     try {
       await api.post("/events", eventData);
       toast.success("Event created successfully!");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.msg || "Failed to create event");
     }

@@ -35,7 +35,7 @@ const EventForm = ({ initialValues, onSubmit, isEditing }) => {
       date: "",
       location: "",
       category: "",
-      image: "https://sampleimage.png",
+      image: "https://sampleimage.png"
     },
     validationSchema,
     onSubmit: async (values) => {

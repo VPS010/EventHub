@@ -92,10 +92,9 @@ const EventDetails = () => {
 
   const handleEditSubmit = async (eventData) => {
     try {
-      const res = await api.put(`/events/${eventId}`, eventData);
-      setEvent(res.data);
+      await api.put(`/events/${eventId}`, eventData);
+      setKey((prevKey) => prevKey + 1);
       setIsEditing(false);
-      handleToggleAttendance();
       toast.success("Event updated successfully!");
     } catch (error) {
       toast.error(error.response?.data?.msg || "Failed to update event");
