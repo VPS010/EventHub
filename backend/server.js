@@ -17,8 +17,11 @@ const server = http.createServer(app);
 // Add this before your routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 
 // Connect Database

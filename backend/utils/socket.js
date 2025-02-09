@@ -8,10 +8,9 @@ const initSocket = (server) => {
             origin: process.env.FRONTEND_URL,
             methods: ["GET", "POST"],
             credentials: true,
-            allowedHeaders: ["my-custom-header"],
+            allowedHeaders: ["my-custom-header", "Authorization"]
         },
-        allowEIO3: true,
-        transport: ['polling', 'websocket']
+        transports: ['polling', 'websocket']
     });
 
     io.on('connection', (socket) => {
